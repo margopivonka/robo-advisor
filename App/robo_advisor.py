@@ -4,46 +4,43 @@ import requests
 import json
 import os
 from dotenv import load_dotenv
+import datetime as dt
+
+def to_usd(my_price):
+    return "${0:,.2f}".format(my_price)
+
 
 load_dotenv()
 
 
+
+
 API_KEY = os.getenv("ALPHAVANTAGE_API_KEY", default="OOPS")
-#SYMBOL = "TSLA"
+
 SYMBOL =input("Please enter a company NYSE symbol: ")
 
-request_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol={SYMBOL}&interval=5min&outputsize=full&apikey={API_KEY}"
-print("URL: ", request_url)
-
-#request_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=TSLA&apikey={API_KEY}"
-
-#SYMBOL = input("Enter a company's symbol: ")
+request_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={SYMBOL}&interval=5min&outputsize=full&apikey={API_KEY}"
 
 response = requests.get(request_url)
-print(type(response))
-print(response.status_code)
-print(type(response.text))
-
-## FIGURE OUT HOW TO LOOP THIS SO IF A USER ENTERS AN INVALID SYMBOL THEY JUST TRY AGAIN
-while True:
-    SYMBOL =input("Please enter a company NYSE symbol: ")
-    if "Error Message" in response.text:
-    print("Oops, couldn't find that symbol, please try a new one.")
-        break
-   
-    else:
-        selected_ids.append(selected_id)
 
 parsed_response = json.loads(response.text)
-print(type(parsed_response))
-#print(parsed_response)
+
+last_refreshed = parsed_response["Meta Data"]["3. Last Refreshed"]
 
 
-
+tsd = parsed_response["Time Series (Daily)"]
 
 #breakpoint()
 
-##ADD TO READ.ME HOW TO SETUP API KEY
+
+dates = list(tsd.keys()) #TODO: assumes first day is on top, but consider sorting to ensure
+latest_day = dates[0]
+latest_close = parsed_response["Time Series (Daily)"]["2020-02-19"]["4. close"]
+recent_high = parsed_response["Time Series (Daily)"]["2020-02-19"]["2. high"]
+recent_low = parsed_response["Time Series (Daily)"]["2020-02-19"]["3. low"]
+
+
+## TODO: ADD TO READ.ME HOW TO SETUP API KEY
 
 
 
@@ -51,24 +48,27 @@ print(type(parsed_response))
 
 
 
+#
+# Print time data was requested
+#
 
-
-
+execution_time = dt.datetime.now()
 
 
 print("-------------------------")
 print("SELECTED SYMBOL: ", SYMBOL)
 print("-------------------------")
 print("REQUESTING STOCK MARKET DATA...")
-print("REQUEST AT: 2018-02-20 02:00pm")
+print("REQUEST AT: ", execution_time.strftime("%Y-%m-%d %I:%M %p"))
 print("-------------------------")
-print("LATEST DAY: 2018-02-20")
-print("LATEST CLOSE: $100,000.00")
-print("RECENT HIGH: $101,000.00")
-print("RECENT LOW: $99,000.00")
+print("LAST REFRESHED: ", last_refreshed)
+print("LATEST DAY: ", latest_day)
+print(f"LATEST CLOSE: ", to_usd(float(latest_close)))
+print(f"RECENT HIGH: ", to_usd(float(recent_high)))
+print("RECENT LOW: ", to_usd(float(recent_low)))
 print("-------------------------")
-print("RECOMMENDATION: BUY!")
-print("RECOMMENDATION REASON: TODO")
-print("-------------------------")
-print("HAPPY INVESTING!")
-print("-------------------------")
+#print("RECOMMENDATION: BUY!")
+#print("RECOMMENDATION REASON: TODO")
+#print("-------------------------")
+#print("HAPPY INVESTING!")
+#print("-------------------------")
