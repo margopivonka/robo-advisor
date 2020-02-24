@@ -22,7 +22,20 @@ SYMBOL =input("Please enter a company NYSE symbol: ")
 
 request_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={SYMBOL}&interval=5min&outputsize=full&apikey={API_KEY}"
 
+
+
+
+
 response = requests.get(request_url)
+
+
+if "Error Message" in response.text:
+    print("Whoops, that symbol does not exist. Please try another one.")
+    exit()
+if "1" "2" "3" "4" "5" "6" "7" "8" "9" "0" in SYMBOL:
+    print("Whoops, please enter a valid company symbol that does not contain numerical values.")
+    exit()
+
 
 parsed_response = json.loads(response.text)
 
@@ -30,7 +43,7 @@ last_refreshed = parsed_response["Meta Data"]["3. Last Refreshed"]
 
 tsd = parsed_response["Time Series (Daily)"]
 
-dates = list(tsd.keys()) #TODO: assumes first day is on top, but consider sorting to ensure
+dates = list(tsd.keys()) 
 latest_day = dates[0]
 
 latest_close = parsed_response["Time Series (Daily)"]["2020-02-19"]["4. close"]
@@ -76,13 +89,6 @@ with open(csv_file_path, "w") as csv_file:
         "close":daily_prices["4. close"],
         "volume":daily_prices["5. volume"]
     })
-
-
-
-
-
-    #need to do looping to write each row
-    
 
 
 
