@@ -60,15 +60,21 @@ recent_low = min(low_prices)
 #
 
 csv_file_path = os.path.join(os.path.dirname(__file__),"..","data","prices.csv")
+csv_headers = ["timestamp", "open", "high", "low", "close", "volume"]
 
 with open(csv_file_path, "w") as csv_file:
-    writer = csv.DictWriter(csv_file, fieldnames=["city", "name"])
+    writer = csv.DictWriter(csv_file, fieldnames=csv_headers)
     writer.writeheader()
-    writer.writerow({"city": "New York", "name": "Yankees"})
-    writer.writerow({"city": "New York", "name": "Mets"})
-    writer.writerow({"city": "Boston", "name": "Red Sox"})
-    writer.writerow({"city": "New Haven", "name": "Ravens"})
-
+    
+    #need to do looping to write each row
+    writer.writerow({
+        "timestamp":"TODO",
+        "open":"TODO",
+        "high":"TODO",
+        "low":"TODO",
+        "close":"TODO",
+        "volume":"TODO"
+    })
 #
 # Print time data was requested
 #
