@@ -51,7 +51,8 @@ prices.csv
 ```
 This file is located within the
  ```
- data```
-  folder, and can be used to take a closer look at stock prices or stock that is recommended to "maybe buy"
+ data
+ ```
+folder, and can be used to take a closer look at stock prices or stock that is recommended to "maybe buy"
 
 # HAPPY INVESTING!!! :)
