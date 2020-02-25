@@ -44,4 +44,14 @@ python app/robo_advisor.py
 ```
 Your command line will prompt you to enter a company's NYSE market symbol, and after doing so, it will give you a recommendation based on stock data available.
 
+### CSV File data
+After running this program, all data available from the URL for the stock symbol entered will be available in a file labeled:
+```
+prices.csv
+```
+This file is located within the
+ ```
+ data```
+  folder, and can be used to take a closer look at stock prices or stock that is recommended to "maybe buy"
+
 # HAPPY INVESTING!!! :)
