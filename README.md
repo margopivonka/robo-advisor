@@ -7,7 +7,7 @@ clone or download from [GitHub source] (https://github.com/margopivonka/robo-adv
 cd robo_adivsor
 ```
 
-##API Key Setup
+## API Key Setup
 To access stock data, you will need your own API access key. 
 Go to https://www.alphavantage.co/ and apply for a personal access key.
 
@@ -43,4 +43,3 @@ Run the program:
 python app/robo_advisor
 ```
 
-## TODO: ADD TO READ.ME HOW TO SETUP API KEY
