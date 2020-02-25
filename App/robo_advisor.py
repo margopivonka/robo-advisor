@@ -22,10 +22,10 @@ response = requests.get(request_url)
 
 if "1" "2" "3" "4" "5" "6" "7" "8" "9" "0" in SYMBOL:
     print("----------------------------")    
-    print("Whoops, please enter a valid company symbol that does not contain numerical values.")
+    print("Whoops, that symbol does not exist. Please try another one.")
     print("----------------------------")
     exit()
-    
+
 if "Error Message" in response.text:
     print("----------------------------")
     print("Whoops, that symbol does not exist. Please try another one.")
