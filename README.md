@@ -40,6 +40,8 @@ python app/robo_advisor.py
 ## Usage
 Run the program:
 ```
-python app/robo_advisor
+python app/robo_advisor.py
 ```
+Your command line will prompt you to enter a company's NYSE market symbol, and after doing so, it will give you a recommendation based on stock data available.
 
+# HAPPY INVESTING!!! :)
