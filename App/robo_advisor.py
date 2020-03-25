@@ -80,19 +80,9 @@ low_prices = [row["low"] for row in rows]
 recent_high = max(high_prices)
 recent_low = min(low_prices)
 
-#
-# RECOMMENDATION CRITERIA
-#
 
-if float(latest_close) <= 1.20*float(recent_low):
-    recommendation = "BUY"
-    reason = "This stock is under-priced, and you should buy as much as you can now!"
-elif (float(latest_close) > 1.20*float(recent_low)) and (float(latest_close) <= 1.40*float(recent_low)):
-    recommendation = "MAYBE BUY"
-    reason = "This stock may be under-priced; do some research or buy a limited amount."
-elif float(latest_close) >= 1.40*float(recent_low):
-    recommendation = "DO NOT BUY"
-    reason = "This stock is over-priced and you should not buy it."
+
+
 #
 # WRITE TO CSV FILE
 #
@@ -121,10 +111,11 @@ print(f"LATEST CLOSE: {to_usd(float(latest_close))}")
 print(f"RECENT HIGH: {to_usd(float(recent_high))}")
 print(f"RECENT LOW: {to_usd(float(recent_low))}")
 print("-------------------------")
-print("RECOMMENDATION: " + recommendation)
-print("BECAUSE: " + reason)
+print("RECOMMENDATION: BUY!")
+print("BECAUSE: TODO")
 print("-------------------------")
 print(f"WRITING DATA TO CSV: {csv_filepath}")
 print("-------------------------")
 print("HAPPY INVESTING!")
 print("-------------------------")
+
