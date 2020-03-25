@@ -1,115 +1,134 @@
 # app/robo_advisor.py
 
-import requests
+import csv
+import datetime
 import json
 import os
-import csv
-import datetime as dt
-from dotenv import load_dotenv
 
-load_dotenv()
+from dotenv import load_dotenv
+import requests
+
+load_dotenv() #> loads contents of the .env file into the script's environment
+
+# utility function to convert float or integer to usd-formatted string (for printing)
+# ... adapted from: https://github.com/s2t2/shopping-cart-screencast/blob/30c2a2873a796b8766e9b9ae57a2764725ccc793/shopping_cart.py#L56-L59
+#def to_usd(my_price):
+ #   return "${0:,.2f}".format(my_price) #> $12,000.71
+
+#
+# INFO INPUTS
+#
+
+api_key = os.environ.get("ALPHAVANTAGE_API_KEY") # "demo"
+#print(api_key)
+
+def get_response(symbol):
+    request_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&apikey={api_key}"
+    response = requests.get(request_url)
+    parsed_response = json.loads(response.text)
+    return parsed_response
+
+def transform_response(parsed_response):
+    tsd = parsed_response["Time Series (Daily)"]
+
+    rows = []
+    for date, daily_prices in tsd.items():
+        row = {
+            "timestamp": date, 
+            "open": float(daily_prices["1. open"]),
+            "high": float(daily_prices["2. high"]),
+            "low": float(daily_prices["3. low"]),
+            "close": float(daily_prices["4. close"]),
+            "volume": float(daily_prices["5. volume"])
+        }
+        rows.append(row)
+
+    return rows
+
+
+def write_to_csv(rows, csv_filepath):
+    csv_headers = ["timestamp", "open", "high", "low", "close", "volume"]
+
+    with open(csv_filepath, "w") as csv_file:
+        writer = csv.DictWriter(csv_file, fieldnames=csv_headers)
+        writer.writeheader()
+        for row in rows:
+            writer.writerow(row)
+
+    return True
+
 
 def to_usd(my_price):
     return "${0:,.2f}".format(my_price)
 
-
-API_KEY = os.getenv("ALPHAVANTAGE_API_KEY", default="OOPS")
-SYMBOL = input("Please enter a company NYSE symbol: ")
-request_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={SYMBOL}&interval=5min&outputsize=full&apikey={API_KEY}"
-execution_time = dt.datetime.now()
-response = requests.get(request_url)
+if __name__ == "__main__":
+    time_now = datetime.datetime.now()
 
 
-if "1" "2" "3" "4" "5" "6" "7" "8" "9" "0" in SYMBOL:
-    print("----------------------------")    
-    print("Whoops, that symbol does not exist. Please try another one.")
-    print("----------------------------")
-    exit()
+#
+# INFO INPUTS
+#
 
-if "Error Message" in response.text:
-    print("----------------------------")
-    print("Whoops, that symbol does not exist. Please try another one.")
-    print("----------------------------")
-    exit()
+symbol = input("Please enter an NYSE company ticker symbol: ")
 
+parsed_response = get_response(symbol)
 
-
-parsed_response = json.loads(response.text)
 last_refreshed = parsed_response["Meta Data"]["3. Last Refreshed"]
-tsd = parsed_response["Time Series (Daily)"]
-dates = list(tsd.keys()) 
-latest_day = dates[0]
-latest_close = parsed_response["Time Series (Daily)"]["2020-02-19"]["4. close"]
+
+rows = transform_response(parsed_response)
 
 
-high_prices = []
-
-for date in dates:
-    high_price =tsd[date]["2. high"] 
-    high_prices.append(float(high_price))
+latest_close = rows[0]["close"]
+high_prices = [row["high"] for row in rows]
+low_prices = [row["low"] for row in rows]
 recent_high = max(high_prices)
-
-
-low_prices = []
-
-for date in dates:
-    low_price =tsd[date]["3. low"] 
-    low_prices.append(float(low_price))
 recent_low = min(low_prices)
 
+#
+# RECOMMENDATION CRITERIA
+#
 
-csv_file_path = os.path.join(os.path.dirname(__file__),"..","data","prices.csv")
-csv_headers = ["timestamp", "open", "high", "low", "close", "volume"]
-
-
-with open(csv_file_path, "w") as csv_file:
-    writer = csv.DictWriter(csv_file, fieldnames=csv_headers)
-    writer.writeheader()
-    
-    for date in dates:
-        daily_prices = tsd[date]
-        writer.writerow({
-        "timestamp":date,
-        "open":daily_prices["1. open"],
-        "high":daily_prices["2. high"],
-        "low":daily_prices["3. low"],
-        "close":daily_prices["4. close"],
-        "volume":daily_prices["5. volume"]
-    })
-
-
-close_price = daily_prices["4. close"]
-
-
-if float(close_price) <= 1.20*float(recent_low):
+if float(latest_close) <= 1.20*float(recent_low):
     recommendation = "BUY"
-    reason = "This stock is under-priced, and you should buy it now!"
-elif (float(close_price) > 1.20*float(recent_low)) and (float(close_price) <= 1.40*float(recent_low)):
+    reason = "This stock is under-priced, and you should buy as much as you can now!"
+elif (float(latest_close) > 1.20*float(recent_low)) and (float(latest_close) <= 1.40*float(recent_low)):
     recommendation = "MAYBE BUY"
-    reason = "This stock may be under-priced, do some research or buy a limited amount."
-elif float(close_price) >= 1.40*float(recent_low):
+    reason = "This stock may be under-priced; do some research or buy a limited amount."
+elif float(latest_close) >= 1.40*float(recent_low):
     recommendation = "DO NOT BUY"
-    reason = "This stock is not under-priced. I do not recommend that you buy any of it."
+    reason = "This stock is over-priced and you should not buy it."
+#
+# WRITE TO CSV FILE
+#
+
+csv_filepath = os.path.join(os.path.dirname(__file__), "..", "data", "prices.csv")
+
+write_to_csv(rows, csv_filepath)
+
+#
+# DISPLAY RESULTS
+#
+
+formatted_time_now = time_now.strftime("%Y-%m-%d %H:%M:%S")
+formatted_csv_filepath = csv_filepath.split("../")[0]
 
 
 
 print("-------------------------")
-print("SELECTED SYMBOL: ", SYMBOL)
+print("SELECTED SYMBOL: MSFT")
 print("-------------------------")
-print("REQUESTING STOCK MARKET DATA...")
-print("REQUEST AT: ", execution_time.strftime("%Y-%m-%d %I:%M %p"))
+print("REQUESTING STOCK MARKET DATA")
+print("REQUEST AT: 2018-02-20 02:00pm")
 print("-------------------------")
-print("LAST REFRESHED: ", last_refreshed)
-print("LATEST DAY: ", latest_day)
-print(f"LATEST CLOSE: ", to_usd(float(latest_close)))
-print(f"RECENT HIGH: ", to_usd(float(recent_high)))
-print("RECENT LOW: ", to_usd(float(recent_low)))
+print(f"LATEST DAY: {last_refreshed}")
+print(f"LATEST CLOSE: {to_usd(float(latest_close))}")
+print(f"RECENT HIGH: {to_usd(float(recent_high))}")
+print(f"RECENT LOW: {to_usd(float(recent_low))}")
 print("-------------------------")
-print("RECOMMENDATION: ", recommendation)
-print("RECOMMENDATION REASON: ", reason)
+print("RECOMMENDATION: " + recommendation)
+print("BECAUSE: " + reason)
 print("-------------------------")
-print(f"WRITING DATA TO CSV: {csv_file_path}...")
+print(f"WRITING DATA TO CSV: {csv_filepath}")
 print("-------------------------")
 print("HAPPY INVESTING!")
 print("-------------------------")
-
