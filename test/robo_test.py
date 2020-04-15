@@ -1,11 +1,7 @@
 import os
 import pytest
 
-from App.robo_advisor import get_response, transform_response, write_to_csv, to_usd
-
-CI_ENV = os.environ.get("CI") == "true" # expect default environment variable setting of "CI=true" on Travis CI, see: https://docs.travis-ci.com/user/environment-variables/#default-environment-variables
-
-@pytest.mark.skipif(CI_ENV==True, reason="to avoid configuring credentials on, and issuing requests from, the CI server")
+from app.robo_advisor import get_response, transform_response, write_to_csv, to_usd
 
 
 def test_get_response():

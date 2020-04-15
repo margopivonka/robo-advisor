@@ -8,22 +8,24 @@ import os
 from dotenv import load_dotenv
 import requests
 
-load_dotenv() #> loads contents of the .env file into the script's environment
+load_dotenv() 
 
 
 #
 # INFO INPUTS
 #
 
-api_key = os.environ.get("ALPHAVANTAGE_API_KEY") # "demo"
-#print(api_key)
+api_key = os.environ.get("ALPHAVANTAGE_API_KEY")
 
+
+# Function to get data based on user input for symbol
 def get_response(symbol):
     request_url = f"https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&apikey={api_key}"
     response = requests.get(request_url)
     parsed_response = json.loads(response.text)
     return parsed_response
 
+# Function to transform stock data into user-friendly format
 def transform_response(parsed_response):
     tsd = parsed_response["Time Series (Daily)"]
 
@@ -41,7 +43,7 @@ def transform_response(parsed_response):
 
     return rows
 
-
+# Function to write stock data to csv file
 def write_to_csv(rows, csv_filepath):
     csv_headers = ["timestamp", "open", "high", "low", "close", "volume"]
 
@@ -53,7 +55,7 @@ def write_to_csv(rows, csv_filepath):
 
     return True
 
-
+# Function to reformat stock prices to user-friendly format
 def to_usd(my_price):
     return "${0:,.2f}".format(my_price)
 

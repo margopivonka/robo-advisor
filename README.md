@@ -55,4 +55,19 @@ This file is located within the
  ```
 folder, and can be used to take a closer look at stock prices or stock that is recommended to "maybe buy"
 
+### Testing
+
+You can test this application by installing the pytest package in your virtual environment:
+
+```
+pip install pytest
+```
+
+Run the tests using the following command:
+```
+pytest
+```
+
+
+
 # HAPPY INVESTING!!! :)
