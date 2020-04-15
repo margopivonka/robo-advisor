@@ -58,64 +58,66 @@ def to_usd(my_price):
     return "${0:,.2f}".format(my_price)
 
 if __name__ == "__main__":
+    
     time_now = datetime.datetime.now()
 
-
-#
-# INFO INPUTS
-#
-
-symbol = input("Please enter an NYSE company ticker symbol: ")
-
-parsed_response = get_response(symbol)
-
-last_refreshed = parsed_response["Meta Data"]["3. Last Refreshed"]
-
-rows = transform_response(parsed_response)
-
-
-latest_close = rows[0]["close"]
-high_prices = [row["high"] for row in rows]
-low_prices = [row["low"] for row in rows]
-recent_high = max(high_prices)
-recent_low = min(low_prices)
-
-
-
-
-#
-# WRITE TO CSV FILE
-#
-
-csv_filepath = os.path.join(os.path.dirname(__file__), "..", "data", "prices.csv")
-
-write_to_csv(rows, csv_filepath)
-
-#
-# DISPLAY RESULTS
-#
-
-formatted_time_now = time_now.strftime("%Y-%m-%d %H:%M:%S")
-formatted_csv_filepath = csv_filepath.split("../")[0]
-
-
-
-print("-------------------------")
-print("SELECTED SYMBOL: MSFT")
-print("-------------------------")
-print("REQUESTING STOCK MARKET DATA")
-print("REQUEST AT: 2018-02-20 02:00pm")
-print("-------------------------")
-print(f"LATEST DAY: {last_refreshed}")
-print(f"LATEST CLOSE: {to_usd(float(latest_close))}")
-print(f"RECENT HIGH: {to_usd(float(recent_high))}")
-print(f"RECENT LOW: {to_usd(float(recent_low))}")
-print("-------------------------")
-print("RECOMMENDATION: BUY!")
-print("BECAUSE: TODO")
-print("-------------------------")
-print(f"WRITING DATA TO CSV: {csv_filepath}")
-print("-------------------------")
-print("HAPPY INVESTING!")
-print("-------------------------")
-
+    
+    #
+    # INFO INPUTS
+    #
+    
+    symbol = input("Please enter an NYSE company ticker symbol: ")
+    
+    parsed_response = get_response(symbol)
+    
+    last_refreshed = parsed_response["Meta Data"]["3. Last Refreshed"]
+    
+    rows = transform_response(parsed_response)
+    
+    
+    latest_close = rows[0]["close"]
+    high_prices = [row["high"] for row in rows]
+    low_prices = [row["low"] for row in rows]
+    recent_high = max(high_prices)
+    recent_low = min(low_prices)
+    
+    
+    
+    
+    #
+    # WRITE TO CSV FILE
+    #
+    
+    csv_filepath = os.path.join(os.path.dirname(__file__), "..", "data", "prices.csv")
+    
+    write_to_csv(rows, csv_filepath)
+    
+    #
+    # DISPLAY RESULTS
+    #
+    
+    formatted_time_now = time_now.strftime("%Y-%m-%d %H:%M:%S")
+    formatted_csv_filepath = csv_filepath.split("../")[0]
+    
+    
+    
+    print("-------------------------")
+    print("SELECTED SYMBOL: MSFT")
+    print("-------------------------")
+    print("REQUESTING STOCK MARKET DATA")
+    print("REQUEST AT: 2018-02-20 02:00pm")
+    print("-------------------------")
+    print(f"LATEST DAY: {last_refreshed}")
+    print(f"LATEST CLOSE: {to_usd(float(latest_close))}")
+    print(f"RECENT HIGH: {to_usd(float(recent_high))}")
+    print(f"RECENT LOW: {to_usd(float(recent_low))}")
+    print("-------------------------")
+    print("RECOMMENDATION: BUY!")
+    print("BECAUSE: TODO")
+    print("-------------------------")
+    print(f"WRITING DATA TO CSV: {csv_filepath}")
+    print("-------------------------")
+    print("HAPPY INVESTING!")
+    print("-------------------------")
+    
+    
