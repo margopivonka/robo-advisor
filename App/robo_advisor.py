@@ -93,6 +93,22 @@ if __name__ == "__main__":
     write_to_csv(rows, csv_filepath)
     
     #
+    # RECOMMENDATION CRITERIA
+    #
+
+    if float(latest_close) <= 1.20*float(recent_low):
+        recommendation="BUY"
+        reason = "Based on stock data, this stock is under-priced. Buy now!"
+    elif (float(latest_close) > 1.20*float(recent_low)) and (float(latest_close) <= 1.40*float(recent_low)):
+        recommendation = "MAYBE BUY..."
+        reason = "Based on stock data, this stock MIGHT be under priced so do some more research before buying."
+    elif float(latest_close) >= 1.40*float(recent_low):
+        recommendation = "DO NOT BUY"
+        reason = "Based on stock data, this stock is over-priced. Don't buy it."
+
+
+
+    #
     # DISPLAY RESULTS
     #
     
@@ -112,8 +128,8 @@ if __name__ == "__main__":
     print(f"RECENT HIGH: {to_usd(float(recent_high))}")
     print(f"RECENT LOW: {to_usd(float(recent_low))}")
     print("-------------------------")
-    print("RECOMMENDATION: BUY!")
-    print("BECAUSE: TODO")
+    print("RECOMMENDATION: " + recommendation)
+    print("BECAUSE: " + reason)
     print("-------------------------")
     print(f"WRITING DATA TO CSV: {csv_filepath}")
     print("-------------------------")
